@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Neuro Training | Super Brain</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+  <style>
+    /* Neuro Training v6.7 - Dense & Calm */
+
+    :root {
+      --primary: #38bdf8;
+      --accent: #f472b6;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --border-color: rgba(56, 189, 248, 0.4);
+      --bg-x: 50%;
+      --bg-y: 50%;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; user-select: none; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #020617;
+      color: #e2e8f0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      position: relative;
+    }
+
+    /* --- VISUALS --- */
+    #neural-network { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+    
+    body::before {
+      content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none;
+      background: radial-gradient(circle at var(--bg-x) var(--bg-y), rgba(56, 189, 248, 0.1), transparent 50%);
+    }
+
+    /* --- UI SYSTEM --- */
+    .screen {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 20px; opacity: 0; pointer-events: none;
+      transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+      transform: scale(0.95); z-index: 10;
+    }
+    .screen.active { opacity: 1; pointer-events: all; transform: scale(1); }
+
+    .menu-container {
+      width: 100%; max-width: 600px; text-align: center;
+      padding: 20px; text-shadow: 0 4px 12px rgba(0,0,0,0.9);
+    }
+
+    .glass-panel {
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 30px;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif; font-size: 3rem; font-weight: 900;
+      background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 15px rgba(56,189,248,0.6));
+      margin-bottom: 5px; letter-spacing: 2px;
+      pointer-events: none;
+    }
+    
+    h2 { font-family: 'Orbitron', sans-serif; color: #fff; margin-bottom: 20px; font-size: 1.8rem; text-shadow: 0 0 10px var(--primary); }
+    .subtitle { color: #94a3b8; letter-spacing: 3px; font-size: 0.8rem; margin-bottom: 30px; text-transform: uppercase; font-weight: bold; }
+
+    /* --- BUTTONS --- */
+    .btn {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--border-color);
+      color: #fff; padding: 18px 25px; border-radius: 12px;
+      font-family: 'Orbitron', sans-serif; text-transform: uppercase; letter-spacing: 2px;
+      cursor: pointer; transition: 0.3s; margin-bottom: 15px; width: 100%;
+      text-shadow: 0 2px 5px rgba(0,0,0,1);
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.1);
+      display: flex; align-items: center; justify-content: center; font-size: 1rem;
+      position: relative; overflow: hidden;
+    }
+    .btn::before {
+      content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: 0.5s;
+    }
+    .btn:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 0 30px rgba(56, 189, 248, 0.4); background: rgba(56, 189, 248, 0.1); }
+    .btn:hover::before { left: 100%; }
+    .btn:active { transform: translateY(-1px); }
+    .btn.secondary { background: transparent; border-color: #475569; color: #94a3b8; font-size: 0.8rem; padding: 12px; box-shadow: none; }
+    .btn.secondary:hover { color: #fff; border-color: #fff; background: rgba(255,255,255,0.05); }
+
+    /* Lang Toggle Button */
+    .btn.lang-toggle {
+        padding: 8px; font-size: 0.7rem; margin-top: 5px; border-color: #334155; color: #64748b; width: auto; display: inline-flex;
+    }
+    .btn.lang-toggle:hover { color: #fff; border-color: var(--primary); }
+
+    /* Feedback Animations */
+    .btn.error-shake { animation: btnShake 0.4s ease; background: rgba(239, 68, 68, 0.8) !important; border-color: #ef4444 !important; color: #fff !important; }
+    .btn.success-pulse { animation: btnPulse 0.4s ease; background: rgba(34, 197, 94, 0.8) !important; border-color: #22c55e !important; color: #fff !important; }
+    @keyframes btnShake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-10px);} 75%{transform:translateX(10px);} }
+    @keyframes btnPulse { 0%{transform:scale(1);} 50%{transform:scale(1.1);} 100%{transform:scale(1);} }
+
+    /* --- LISTS --- */
+    .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; width: 100%; }
+    
+    #game-list {
+      display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;
+      overflow-y: auto; max-height: 55vh; padding: 10px 5px;
+    }
+    #game-list::-webkit-scrollbar { width: 4px; }
+    #game-list::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 2px; }
+
+    .game-item {
+      display: flex; align-items: center; padding: 15px 20px;
+      border: 1px solid var(--border-color); border-radius: 16px;
+      background: rgba(15, 23, 42, 0.6); cursor: pointer; transition: 0.3s;
+      text-align: left; position: relative; overflow: hidden; flex-shrink: 0;
+      width: 96%; margin: 0 auto;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+    .game-item:hover { 
+      background: rgba(56, 189, 248, 0.15); border-color: var(--primary); 
+      transform: scale(1.02); box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+    }
+    .game-icon { font-size: 2rem; margin-right: 20px; filter: drop-shadow(0 0 5px var(--primary)); }
+    .game-details { flex: 1; }
+    .game-name { font-family: 'Orbitron', sans-serif; font-weight: bold; color: #fff; font-size: 1rem; margin-bottom: 3px; }
+    .game-desc { font-size: 0.7rem; color: #cbd5e1; margin-bottom: 5px; }
+    .stat-badge { font-size: 0.65rem; color: var(--success); font-weight: bold; font-family: 'Orbitron'; background: rgba(34,197,94,0.1); padding: 2px 6px; border-radius: 4px; display: inline-block; margin-right: 5px; }
+    .diff-badge { font-size: 0.65rem; color: var(--accent); font-weight: bold; font-family: 'Orbitron'; background: rgba(244,114,182,0.1); padding: 2px 6px; border-radius: 4px; display: inline-block; }
+
+    /* --- DIFFICULTY BUTTONS --- */
+    .diff-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 20px; }
+    .diff-btn {
+      aspect-ratio: 1; border-radius: 12px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      cursor: pointer; transition: 0.3s; font-family: 'Orbitron'; 
+      background: rgba(30, 41, 59, 0.5); border: 2px solid rgba(255,255,255,0.1);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3); color: #94a3b8;
+      position: relative; overflow: hidden;
+    }
+    .diff-btn::before {
+      content:''; position: absolute; top:0; left:0; width:100%; height:100%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.1), transparent);
+    }
+    .diff-btn:hover { transform: translateY(-5px) scale(1.05); color: #fff; border-color: #fff; }
+    .diff-btn:active { transform: scale(0.95); }
+    
+    /* --- GAME HUD & AREA --- */
+    .hud {
+      display: flex; justify-content: space-between; align-items: center;
+      width: 100%; max-width: 500px; margin-bottom: 20px; padding: 10px 20px;
+      border: 1px solid var(--border-color); border-radius: 50px;
+      background: rgba(15, 23, 42, 0.8); font-family: 'Orbitron';
+      box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+      z-index: 20; position: relative;
+    }
+    .hud-btn {
+      width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--primary);
+      color: var(--primary); background: transparent; cursor: pointer; 
+      display: flex; align-items: center; justify-content: center; font-weight: bold;
+    }
+    .hud-btn:hover { background: var(--primary); color: #000; }
+
+    .board-container {
+      width: 100%; max-width: 450px; aspect-ratio: 1;
+      border: 1px solid var(--border-color); border-radius: 20px;
+      padding: 15px; position: relative;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(15, 23, 42, 0.4);
+      box-shadow: 0 0 40px rgba(56, 189, 248, 0.1);
+      perspective: 1000px;
+    }
+
+    /* --- GAME ELEMENTS --- */
+    .grid { display: grid; gap: 6px; width: 100%; height: 100%; }
+    .tile {
+      background: rgba(30, 41, 59, 0.9); border: 1px solid #475569; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-family: 'Orbitron'; color: #fff; font-size: 1.2rem;
+      transition: 0.1s; position: relative;
+    }
+    .tile:active { transform: scale(0.92); }
+    .tile.lit { background: var(--primary); color: #000; box-shadow: 0 0 20px var(--primary); border-color: #fff; }
+    .tile.correct { background: var(--success); border-color: #fff; box-shadow: 0 0 20px var(--success); }
+    .tile.wrong { background: var(--danger); animation: shake 0.4s; border-color: #fff; box-shadow: 0 0 20px var(--danger); }
+    
+    /* 2D Slitherlink */
+    .slither-wrapper { display: grid; width: 100%; height: 100%; user-select: none; }
+    .slither-dot { background: #fff; border-radius: 50%; width: 6px; height: 6px; justify-self: center; align-self: center; box-shadow: 0 0 5px #fff; }
+    .slither-cell { display: flex; align-items: center; justify-content: center; font-family: 'Orbitron'; color: #64748b; font-size: 1.2rem; }
+    .slither-edge { position: relative; cursor: pointer; transition: 0.1s; }
+    .slither-edge:hover { background: rgba(255,255,255,0.1); }
+    .slither-edge.active { background: var(--primary); box-shadow: 0 0 10px var(--primary); }
+
+    /* --- 3D SYSTEM --- */
+    .scene-3d { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; cursor: grab; }
+    .scene-3d:active { cursor: grabbing; }
+    .pivot-3d { 
+      width: 0; height: 0; position: absolute; top: 50%; left: 50%;
+      transform-style: preserve-3d; 
+    }
+
+    /* Faces for 3D Cube Match */
+    .face { 
+      position: absolute; width: 200px; height: 200px; 
+      left: -100px; top: -100px;
+      border: 2px solid var(--primary); background: rgba(56, 189, 248, 0.15); 
+      display: flex; align-items: center; justify-content: center; 
+      font-size: 3rem; font-weight: bold; color: #fff; 
+      backface-visibility: hidden; box-shadow: inset 0 0 30px rgba(56, 189, 248, 0.2);
+    }
+    .f-front  { transform: rotateY(  0deg) translateZ(100px); }
+    .f-right  { transform: rotateY( 90deg) translateZ(100px); }
+    .f-back   { transform: rotateY(180deg) translateZ(100px); }
+    .f-left   { transform: rotateY(-90deg) translateZ(100px); }
+    .f-top    { transform: rotateX( 90deg) translateZ(100px); }
+    .f-bottom { transform: rotateX(-90deg) translateZ(100px); }
+
+    /* --- 3D LIGHTS TARGET (Voxels) --- */
+    .voxel-ui-layout { display: flex; flex-direction: column; width: 100%; height: 100%; }
+    .voxel-preview-area { flex: 1; display: flex; justify-content: space-around; align-items: center; perspective: 600px; }
+    .voxel-mini-scene { 
+      width: 120px; height: 120px; position: relative; transform-style: preserve-3d; 
+      transform: rotateX(-20deg) rotateY(45deg); cursor: grab; z-index: 50;
+    }
+    .voxel-mini-scene:active { cursor: grabbing; }
+    
+    .mini-cube {
+      position: absolute; width: 20px; height: 20px; left: 50px; top: 50px; 
+      transform-style: preserve-3d; transition: 0.3s; pointer-events: none;
+    }
+    .mc-face {
+      position: absolute; width: 100%; height: 100%;
+      background: rgba(56, 189, 248, 0.05); /* Faint tint for all cubes */
+      border: 1px solid rgba(56, 189, 248, 0.1);
+    }
+    
+    /* Lit Styles: Wireframe Only */
+    .mini-cube.lit-target .mc-face { 
+      background: transparent; border: 2px solid #fbbf24; box-shadow: 0 0 8px #fbbf24;
+    }
+    .mini-cube.lit-player .mc-face { 
+      background: transparent; border: 2px solid #38bdf8; box-shadow: 0 0 8px #38bdf8;
+    }
+
+    .voxel-controls { 
+      flex: 1; display: flex; flex-direction: row; gap: 15px; 
+      justify-content: center; align-items: flex-start; padding: 10px; 
+      background: rgba(0,0,0,0.3); border-radius: 15px; 
+    }
+    .voxel-control-col { display:flex; flex-direction:column; align-items:center; gap:5px; }
+    .voxel-layer { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 5px; border: 1px solid #475569; border-radius: 8px; }
+    .voxel-layer.read-only { opacity: 0.7; pointer-events: none; border-color: var(--accent); }
+    .voxel-btn { width: 25px; height: 25px; background: #1e293b; border: 1px solid #334155; border-radius: 4px; cursor: pointer; }
+    .voxel-btn.lit { background: var(--primary); box-shadow: 0 0 10px var(--primary); border-color: #fff; }
+    .voxel-btn.lit-target { background: #fbbf24; border-color: #fff; }
+    .layer-label { text-align: center; font-size: 0.6rem; color: #94a3b8; margin-bottom: 2px; }
+    
+    .spin-controls { position:absolute; bottom:120px; width:100%; display:flex; justify-content:space-between; padding:0 20px; pointer-events:none; }
+    .spin-btn { pointer-events:auto; background:rgba(0,0,0,0.5); color:#fff; border:1px solid #fff; border-radius:50%; width:40px; height:40px; font-size:1.2rem; cursor:pointer; }
+    .spin-btn:active { background: #fff; color: #000; }
+
+    /* --- 3D SLITHER LINK (Cube Wall) --- */
+    .wall-cube { 
+      position: absolute; width: 40px; height: 40px; 
+      left: 50%; top: 50%; margin-left: -20px; margin-top: -20px;
+      transform-style: preserve-3d; pointer-events: none;
+    }
+    .wall-face {
+      position: absolute; width: 100%; height: 100%; 
+      background: rgba(30, 41, 59, 0.1); border: 1px solid rgba(255,255,255,0.1);
+      backface-visibility: visible; pointer-events: none; /* CLICK THROUGH */
+    }
+    .wall-face-front {
+      position: absolute; width: 100%; height: 100%; 
+      background: rgba(15,23,42,0.4); border: 1px solid #475569;
+      display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Orbitron'; font-size: 1.2rem;
+      transform: translateZ(20px); pointer-events: none; /* CLICK THROUGH */
+    }
+    /* Edge Styling */
+    .wall-edge { 
+      position: absolute; 
+      background: rgba(255,255,255,0.1); 
+      cursor: pointer; transition: 0.2s; z-index: 100; transform-style: preserve-3d; 
+      left: 50%; top: 50%; pointer-events: auto; /* Clickable */
+    }
+    .wall-edge:hover { background: rgba(255,255,255,0.8); box-shadow: 0 0 8px #fff; }
+    .wall-edge.active { background: var(--accent); box-shadow: 0 0 15px var(--accent); opacity: 1; }
+
+    /* Overlays */
+    .overlay {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(2, 6, 23, 0.95); z-index: 100;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 30px; text-align: center;
+    }
+    .overlay.hidden { display: none; }
+    .stars { font-size: 3rem; color: #fbbf24; margin: 15px 0; letter-spacing: 5px; filter: drop-shadow(0 0 10px #fbbf24); }
+    .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:20px; width:100%; max-width:300px; text-align:left; font-size:0.9rem; color:#cbd5e1; }
+    .stat-val { color:#fff; font-weight:bold; font-family:'Orbitron'; float:right; }
+
+    @keyframes shake { 0%,100%{transform:translate(0);} 25%{transform:translate(-5px);} 75%{transform:translate(5px);} }
+  </style>
+</head>
+<body>
+
+<canvas id="neural-network"></canvas>
+
+<!-- 1. MAIN MENU -->
+<div id="screen-main" class="screen active">
+  <div class="menu-container">
+    <h1 id="txt-title">Neuro Training</h1>
+    <div class="creator-info" style="font-size:0.9rem; color:#94a3b8; font-family:'Orbitron';">By Eric // CCPspy</div>
+    <div class="school-info" style="font-size:0.75rem; color:#64748b; margin-bottom:40px; letter-spacing:2px;">Willetton SHS</div>
+
+    <button id="btn-start" class="btn" onclick="UI.nav('categories')">Start Training</button>
+    <button id="btn-online" class="btn" onclick="alert('Multiplayer servers offline.')">Online Versus</button>
+    <a href="https://ccpspy.github.io/" class="btn secondary" id="btn-hub">Return to Hub</a>
+    
+    <button class="btn secondary lang-toggle" id="btn-lang" onclick="Lang.toggle()">变为中文</button>
+  </div>
+</div>
+
+<!-- 2. CATEGORY SELECTION -->
+<div id="screen-categories" class="screen">
+  <div class="menu-container">
+    <h2 id="txt-select">Select Module</h2>
+    <div class="category-grid">
+      <button class="btn" id="cat-mem" onclick="App.selectCategory('memory')">Memory</button>
+      <button class="btn" id="cat-log" onclick="App.selectCategory('logic')">Logic</button>
+      <button class="btn" id="cat-spa" onclick="App.selectCategory('spatial')">Spatial</button>
+      <button class="btn" id="cat-spd" onclick="App.selectCategory('speed')">Speed</button>
+    </div>
+    <button class="btn secondary" id="btn-back-cat" onclick="UI.nav('main')">Back</button>
+  </div>
+</div>
+
+<!-- 3. GAME LIST -->
+<div id="screen-games" class="screen">
+  <div class="menu-container">
+    <h2 id="cat-title">Memory</h2>
+    <div id="game-list">
+      <!-- Injected via JS -->
+    </div>
+    <button class="btn secondary" id="btn-back-games" onclick="UI.nav('categories')">Back</button>
+  </div>
+</div>
+
+<!-- 4. DIFFICULTY SELECT -->
+<div id="screen-diff" class="screen">
+  <div class="menu-container glass-panel">
+    <h2 id="diff-title">Game Title</h2>
+    <div class="subtitle" id="txt-sel-diff">Select Difficulty</div>
+    
+    <div class="diff-grid" id="diff-grid-container">
+      <!-- Buttons injected via JS -->
+    </div>
+    
+    <div style="font-size:0.8rem; color:#94a3b8; margin-top:15px; margin-bottom:20px;" id="txt-endless">
+      Levels generated endlessly.
+    </div>
+
+    <button class="btn secondary" id="btn-back-diff" onclick="UI.nav('games')">Back</button>
+  </div>
+</div>
+
+<!-- 5. GAME BOARD -->
+<div id="screen-game" class="screen">
+  <div class="hud">
+    <div style="display:flex; gap:10px;">
+      <button class="hud-btn" onclick="App.openTut()">?</button>
+      <button class="hud-btn" onclick="Game.init(App.gameId, App.difficulty)">↻</button>
+    </div>
+    <div style="text-align:center;">
+      <span id="hud-level" style="font-size:0.8rem; display:block; color:#94a3b8;">Diff 1</span>
+      <span id="hud-timer" style="color:var(--primary); font-size:1.2rem;">00:00</span>
+    </div>
+    <div style="width:70px;"></div>
+  </div>
+  
+  <div id="board-container" class="board-container">
+    <!-- Game Content -->
+  </div>
+  
+  <div style="margin-top:20px; width:100%; max-width:450px; display:flex; flex-direction:column; gap:10px; position:relative; z-index:20;">
+    <button id="submit-btn" class="btn" style="background:var(--success); display:none;" onclick="App.submit()">SUBMIT</button>
+    <div style="display:flex; gap:10px; width:100%;">
+      <button class="btn secondary" id="btn-pause" onclick="App.pause()">Pause</button>
+      <button class="btn secondary" id="btn-hint" onclick="Game.hint()">Hint</button>
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAYS -->
+<div id="overlay-tut" class="overlay hidden">
+  <div style="font-size:3.5rem; margin-bottom:15px; color:var(--primary);" id="tut-icon">🧠</div>
+  <h2 id="tut-title">How To Play</h2>
+  <div id="tut-text" style="color:#cbd5e1; margin-bottom:30px; text-align:left; line-height:1.8; max-width:400px; font-size:0.9rem;"></div>
+  <button class="btn" id="btn-start-proto" onclick="App.closeTut()">Start Protocol</button>
+</div>
+
+<div id="overlay-win" class="overlay hidden">
+  <h2 style="color:var(--success)" id="txt-proto-comp">Protocol Complete</h2>
+  <div class="stars" id="win-stars">★★★</div>
+  
+  <div class="stats-grid">
+    <div><span id="lbl-time">Time</span>: <span class="stat-val" id="win-time">00:00</span></div>
+    <div><span id="lbl-diff">Difficulty</span>: <span class="stat-val" id="win-diff">1</span></div>
+    <div><span id="lbl-mistakes">Mistakes</span>: <span class="stat-val" id="win-mistakes">0</span></div>
+  </div>
+
+  <button class="btn" id="btn-next" onclick="App.nextLevel()">Next Protocol</button>
+  <button class="btn secondary" id="btn-menu" onclick="App.quit()">Menu</button>
+</div>
+
+<div id="overlay-pause" class="overlay hidden">
+  <h2 id="txt-paused">Paused</h2>
+  <div style="width:200px;">
+    <button class="btn" id="btn-resume" onclick="App.resume()">Resume</button>
+    <button class="btn secondary" id="btn-quit" onclick="App.quit()">Quit</button>
+  </div>
+</div>
+
+<script>
+/* --- LOCALIZATION --- */
+const Lang = {
+  curr: 'en',
+  dict: {
+    en: {
+      title: "Neuro Training", start: "Start Training", online: "Online Versus", hub: "Return to Hub",
+      select: "Select Module", mem: "Memory", log: "Logic", spa: "Spatial", spd: "Speed", back: "Back",
+      diff: "Select Difficulty", endless: "Levels generated endlessly.",
+      pause: "Pause", hint: "Hint", submit: "SUBMIT", correct: "CORRECT", wrong: "WRONG",
+      proto: "Start Protocol", comp: "Protocol Complete", time: "Time", difficulty: "Difficulty", mistakes: "Mistakes",
+      next: "Next Protocol", menu: "Menu", paused: "Paused", resume: "Resume", quit: "Quit",
+      novice: "Novice", easy: "Easy", normal: "Normal", hard: "Hard", elite: "Elite",
+      mem_matrix: "Memory Matrix", mem_seq: "Sequence Link",
+      log_slide: "Digital Huarong", log_lights: "Grid Link", log_nono: "Logic Cross", log_slither: "Slither Link",
+      spa_cube: "3D Cube Match", spa_lights_3d: "3D Lights Target", spa_slither_3d: "3D Slither Link",
+      spd_schulte: "Schulte Grid",
+      desc_mem_matrix: "Recall positions.", desc_mem_seq: "Repeat pattern order.",
+      desc_log_slide: "Sliding numbers.", desc_log_lights: "Light up all grids.", desc_log_nono: "Nonogram reasoning.", desc_log_slither: "Connect the loop.",
+      desc_spa_cube: "Mental rotation.", desc_spa_lights_3d: "Match 3D pattern.", desc_spa_slither_3d: "Wall Logic.",
+      desc_spd_schulte: "Rapid reaction.",
+      best: "Best", level: "Level", lang_btn: "变为中文"
+    },
+    zh: {
+      title: "神经特训", start: "开始训练", online: "在线对战", hub: "返回主页",
+      select: "选择模块", mem: "记忆力", log: "逻辑力", spa: "空间力", spd: "反应力", back: "返回",
+      diff: "选择难度", endless: "关卡无限生成",
+      pause: "暂停", hint: "提示", submit: "提交", correct: "正确", wrong: "错误",
+      proto: "开始挑战", comp: "训练完成", time: "用时", difficulty: "难度", mistakes: "失误",
+      next: "下一关", menu: "菜单", paused: "暂停中", resume: "继续", quit: "退出",
+      novice: "入门", easy: "简单", normal: "普通", hard: "困难", elite: "大师",
+      mem_matrix: "记忆矩阵", mem_seq: "序列连线",
+      log_slide: "数字华容道", log_lights: "点灯游戏", log_nono: "数织", log_slither: "数回",
+      spa_cube: "立方配对", spa_lights_3d: "3D点灯", spa_slither_3d: "3D数回",
+      spd_schulte: "舒尔特方格",
+      desc_mem_matrix: "记住方块位置。", desc_mem_seq: "重复闪烁顺序。",
+      desc_log_slide: "数字排序拼图。", desc_log_lights: "点亮所有格子。", desc_log_nono: "根据数字填涂。", desc_log_slither: "数字连线成环。",
+      desc_spa_cube: "空间旋转匹配。", desc_spa_lights_3d: "3D图案复原。", desc_spa_slither_3d: "立体连线逻辑。",
+      desc_spd_schulte: "快速按序点击。",
+      best: "最佳", level: "等级", lang_btn: "Change to English"
+    }
+  },
+
+  get(k) { return this.dict[this.curr][k] || k; },
+
+  toggle() {
+    this.curr = this.curr === 'en' ? 'zh' : 'en';
+    this.apply();
+  },
+
+  apply() {
+    document.getElementById('txt-title').innerText = this.get('title');
+    document.getElementById('btn-start').innerText = this.get('start');
+    document.getElementById('btn-online').innerText = this.get('online');
+    document.getElementById('btn-hub').innerText = this.get('hub');
+    document.getElementById('btn-lang').innerText = this.get('lang_btn');
+    
+    document.getElementById('txt-select').innerText = this.get('select');
+    document.getElementById('cat-mem').innerText = this.get('mem');
+    document.getElementById('cat-log').innerText = this.get('log');
+    document.getElementById('cat-spa').innerText = this.get('spa');
+    document.getElementById('cat-spd').innerText = this.get('spd');
+    
+    document.getElementById('txt-sel-diff').innerText = this.get('diff');
+    document.getElementById('txt-endless').innerText = this.get('endless');
+    
+    document.getElementById('btn-back-cat').innerText = this.get('back');
+    document.getElementById('btn-back-games').innerText = this.get('back');
+    document.getElementById('btn-back-diff').innerText = this.get('back');
+    
+    document.getElementById('btn-pause').innerText = this.get('pause');
+    document.getElementById('btn-hint').innerText = this.get('hint');
+    document.getElementById('submit-btn').innerText = this.get('submit');
+    
+    document.getElementById('btn-start-proto').innerText = this.get('proto');
+    document.getElementById('txt-proto-comp').innerText = this.get('comp');
+    document.getElementById('lbl-time').innerText = this.get('time');
+    document.getElementById('lbl-diff').innerText = this.get('difficulty');
+    document.getElementById('lbl-mistakes').innerText = this.get('mistakes');
+    document.getElementById('btn-next').innerText = this.get('next');
+    document.getElementById('btn-menu').innerText = this.get('menu');
+    
+    document.getElementById('txt-paused').innerText = this.get('paused');
+    document.getElementById('btn-resume').innerText = this.get('resume');
+    document.getElementById('btn-quit').innerText = this.get('quit');
+
+    if(document.getElementById('screen-diff').classList.contains('active')) UI.renderDifficulty();
+  }
+};
+
+/* --- CORE DATA --- */
+const Data = {
+  saves: JSON.parse(localStorage.getItem('neuro_v4_stats')) || {},
+  save(gameId, diff, stars, time) {
+    if(!this.saves[gameId]) this.saves[gameId] = { maxDiff: 1, bestTimes: {} };
+    if(diff === this.saves[gameId].maxDiff && stars >= 2 && diff < 5) {
+      this.saves[gameId].maxDiff++;
+    }
+    const currentBest = this.saves[gameId].bestTimes[diff];
+    if(!currentBest || time < currentBest) {
+      this.saves[gameId].bestTimes[diff] = time;
+    }
+    localStorage.setItem('neuro_v4_stats', JSON.stringify(this.saves));
+  },
+  categories: {
+    memory: [
+      { id: 'mem_matrix', name: 'mem_matrix', desc: 'desc_mem_matrix', icon: '🧠', diff: 3 },
+      { id: 'mem_seq', name: 'mem_seq', desc: 'desc_mem_seq', icon: '🔢', diff: 4 }
+    ],
+    logic: [
+      { id: 'log_slide', name: 'log_slide', desc: 'desc_log_slide', icon: '🧩', diff: 5 },
+      { id: 'log_lights', name: 'log_lights', desc: 'desc_log_lights', icon: '💡', diff: 4 },
+      { id: 'log_nono', name: 'log_nono', desc: 'desc_log_nono', icon: '⬛', diff: 5 },
+      { id: 'log_slither', name: 'log_slither', desc: 'desc_log_slither', icon: '🔗', diff: 4 }
+    ],
+    spatial: [
+      { id: 'spa_cube', name: 'spa_cube', desc: 'desc_spa_cube', icon: '🧊', diff: 4 },
+      { id: 'spa_lights_3d', name: 'spa_lights_3d', desc: 'desc_spa_lights_3d', icon: '✨', diff: 6 },
+      { id: 'spa_slither_3d', name: 'spa_slither_3d', desc: 'desc_spa_slither_3d', icon: '💠', diff: 7 }
+    ],
+    speed: [
+      { id: 'spd_schulte', name: 'spd_schulte', desc: 'desc_spd_schulte', icon: '⚡', diff: 3 }
+    ]
+  },
+  tutorials: {
+    mem_matrix: ["Observe the highlighted tiles.", "Wait for them to vanish.", "Tap the correct positions."],
+    mem_seq: ["Watch the sequence.", "Wait for 'YOUR TURN'.", "Repeat the sequence exactly."],
+    log_slide: ["Slide tiles into empty space.", "Order numbers 1, 2, 3..."],
+    log_lights: ["Tap a grid cell to toggle it and neighbors.", "Goal: Turn ON every light."],
+    log_nono: ["Numbers = filled cells block length.", "Tap to fill, Tap again to clear."],
+    log_slither: ["Connect dots to form ONE single loop.", "Numbers = lines around cell.", "Click edges.", "Press SUBMIT to check."],
+    spa_cube: ["Drag to rotate cube.", "Match target face number to Front."],
+    spa_lights_3d: ["Target is Left (Gold). You are Right (Blue).", "HOLD Arrows/Buttons/Drag to spin.", "Release to return.", "Modify your cube layers to match target."],
+    spa_slither_3d: ["Drag ANYWHERE to rotate the wall.", "Click EDGES to highlight.", "Numbers = edges around that cube.", "Form a continuous loop.", "Press SUBMIT."],
+    spd_schulte: ["Tap numbers in order (1, 2, 3...).", "Be fast."]
+  }
+};
+
+const UI = {
+  nav(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(`screen-${id}`).classList.add('active');
+  },
+  formatTime(s) {
+    const m = Math.floor(s/60).toString().padStart(2,'0');
+    const sec = (s%60).toString().padStart(2,'0');
+    return `${m}:${sec}`;
+  },
+  renderGames(cat) {
+    const list = document.getElementById('game-list');
+    list.innerHTML = '';
+    Data.categories[cat].forEach(g => {
+      const saved = Data.saves[g.id];
+      const maxD = saved ? saved.maxDiff : 1;
+      let bestStr = '';
+      if(saved && saved.bestTimes[maxD]) {
+        bestStr = `<div class="stat-badge">${Lang.get('best')}: ${UI.formatTime(saved.bestTimes[maxD])} (Lv${maxD})</div>`;
+      }
+      const item = document.createElement('div');
+      item.className = 'game-item';
+      item.innerHTML = `
+        <div class="game-icon">${g.icon}</div>
+        <div class="game-details">
+          <div class="game-name">${Lang.get(g.name)}</div>
+          <div class="game-desc">${Lang.get(g.desc)}</div>
+          ${bestStr}
+          <div class="diff-badge">${Lang.get('difficulty')}: ${g.diff}/10</div>
+        </div>
+      `;
+      item.onclick = () => App.selectGame(g.id, g.name);
+      list.appendChild(item);
+    });
+    const titles = { memory: 'mem', logic: 'log', spatial: 'spa', speed: 'spd' };
+    document.getElementById('cat-title').innerText = Lang.get(titles[cat]);
+  },
+  renderDifficulty() {
+    const cont = document.getElementById('diff-grid-container');
+    cont.innerHTML = '';
+    const colors = ['#4ade80', '#2dd4bf', '#38bdf8', '#818cf8', '#f472b6']; 
+    const labels = ['novice', 'easy', 'normal', 'hard', 'elite'];
+    [1,2,3,4,5].forEach((d, i) => {
+      const btn = document.createElement('div');
+      btn.className = 'diff-btn';
+      btn.innerHTML = `<span style="font-size:1.5rem">${d}</span><span style="font-size:0.6rem; text-transform:uppercase">${Lang.get(labels[i])}</span>`;
+      btn.style.color = colors[i];
+      btn.style.borderColor = colors[i];
+      btn.style.boxShadow = `0 4px 10px ${colors[i]}33`;
+      btn.onclick = () => App.start(d);
+      cont.appendChild(btn);
+    });
+  }
+};
+
+const App = {
+  gameId: null,
+  difficulty: 1,
+  mistakes: 0,
+  selectCategory(cat) { UI.renderGames(cat); UI.nav('games'); },
+  selectGame(id, name) {
+    this.gameId = id;
+    document.getElementById('diff-title').innerText = Lang.get(name);
+    UI.renderDifficulty();
+    UI.nav('diff');
+  },
+  start(diff) {
+    this.difficulty = diff;
+    this.mistakes = 0;
+    UI.nav('game');
+    document.getElementById('hud-level').innerText = `${Lang.get('level')} ${diff}`;
+    const logicGames = ['log_slither', 'spa_lights_3d', 'spa_slither_3d', 'log_lights', 'log_nono'];
+    const btn = document.getElementById('submit-btn');
+    btn.style.display = logicGames.includes(this.gameId) ? 'block' : 'none';
+    btn.innerText = Lang.get('submit');
+    btn.className = "btn"; 
+    const tutKey = `tut_v6.6_${this.gameId}`;
+    if(!localStorage.getItem(tutKey)) { this.openTut(); localStorage.setItem(tutKey, 'true'); } else { Game.init(this.gameId, diff); }
+  },
+  openTut() {
+    Game.pause();
+    document.getElementById('tut-title').innerText = document.getElementById('diff-title').innerText;
+    let icon = '🧠'; Object.values(Data.categories).flat().forEach(g => { if(g.id === this.gameId) icon = g.icon; });
+    document.getElementById('tut-icon').innerText = icon;
+    document.getElementById('tut-text').innerHTML = Data.tutorials[this.gameId].map(t => `• ${t}`).join('<br><br>');
+    document.getElementById('overlay-tut').classList.remove('hidden');
+  },
+  closeTut() { document.getElementById('overlay-tut').classList.add('hidden'); Game.init(this.gameId, this.difficulty); },
+  pause() { Game.pause(); document.getElementById('overlay-pause').classList.remove('hidden'); },
+  resume() { document.getElementById('overlay-pause').classList.add('hidden'); Game.resume(); },
+  quit() { Game.stop(); document.querySelectorAll('.overlay').forEach(o => o.classList.add('hidden')); UI.nav('diff'); },
+  submit() { if(Game.checkWinCondition) Game.checkWinCondition(); },
+  feedback(isCorrect, msg) {
+    const btn = document.getElementById('submit-btn');
+    if(!isCorrect) {
+      this.mistakes++;
+      btn.innerText = msg || Lang.get('wrong');
+      btn.classList.add('error-shake');
+      setTimeout(() => { btn.classList.remove('error-shake'); btn.innerText = Lang.get('submit'); }, 1500);
+    } else {
+      btn.innerText = Lang.get('correct');
+      btn.classList.add('success-pulse');
+    }
+  },
+  win(stars, mistakes=0) {
+    App.feedback(true);
+    const totalMistakes = mistakes + this.mistakes;
+    let finalStars = stars;
+    if(totalMistakes > 0) finalStars = Math.max(1, stars - 1);
+    if(totalMistakes > 3) finalStars = 1;
+    Data.save(this.gameId, this.difficulty, finalStars, Game.timer);
+    document.getElementById('win-stars').innerText = '★'.repeat(finalStars);
+    document.getElementById('win-time').innerText = UI.formatTime(Game.timer);
+    document.getElementById('win-diff').innerText = this.difficulty;
+    document.getElementById('win-mistakes').innerText = totalMistakes;
+    setTimeout(() => { document.getElementById('overlay-win').classList.remove('hidden'); }, 500);
+  },
+  nextLevel() { document.getElementById('overlay-win').classList.add('hidden'); this.mistakes = 0; Game.init(this.gameId, this.difficulty); }
+};
+window.addEventListener('keydown', (e) => { if((e.key === 'Enter' || e.code === 'Space') && !document.getElementById('screen-game').classList.contains('hidden')) App.submit(); });
+
+/* --- GAME ENGINE (V5.8) --- */
+const Game = {
+  timer: 0, int: null, active: false, config: {}, state: {},
+  rot: { x: -20, y: 45 }, checkWinCondition: null,
+  init(id, diff) {
+    this.stop(); this.active = true; this.timer = 0; this.updateHUD(); this.checkWinCondition = null;
+    this.int = setInterval(() => { this.timer++; this.updateHUD(); }, 1000);
+    const board = document.getElementById('board-container'); board.innerHTML = '';
+    this.rot = { x: -20, y: 45 };
+    if(id === 'mem_matrix') this.memMatrix(board, diff);
+    if(id === 'mem_seq') this.memSeq(board, diff);
+    if(id === 'log_slide') this.logSlide(board, diff);
+    if(id === 'log_lights') this.logLights(board, diff);
+    if(id === 'log_nono') this.logNono(board, diff);
+    if(id === 'log_slither') this.logSlither(board, diff);
+    if(id === 'spd_schulte') this.spdSchulte(board, diff);
+    if(id === 'spa_cube') this.spaCubeMatchInit(board, diff);
+    if(id === 'spa_lights_3d') this.spaLights3D(board, diff);
+    if(id === 'spa_slither_3d') this.spaSlither3D(board, diff);
+  },
+  stop() { this.active = false; clearInterval(this.int); if (this.seqTimeout) clearTimeout(this.seqTimeout); if (this.cleanup) { this.cleanup(); this.cleanup = null; } },
+  pause() { clearInterval(this.int); },
+  resume() { this.int = setInterval(() => { this.timer++; this.updateHUD(); }, 1000); },
+  updateHUD() { 
+    const m = Math.floor(this.timer/60).toString().padStart(2,'0'); const s = (this.timer%60).toString().padStart(2,'0');
+    document.getElementById('hud-timer').innerText = `${m}:${s}`;
+  },
+  hint() { alert("Hint: Focus on the constraints!"); },
+  sleep(ms) { return new Promise(r => setTimeout(r, ms)); },
+
+  // --- WALKER V2 ---
+  generate2DWalkerLoop(w, h, diff) {
+    const loop = new Set();
+    let cx = Math.floor(w/2), cy = Math.floor(h/2);
+    const startX = cx, startY = cy;
+    const path = [{x:cx,y:cy}];
+    let steps = 0;
+    const minSteps = 8 + diff * 6; 
+    const maxSteps = (w*h) * 0.7; 
+    const straightBias = diff < 3 ? 0.7 : 0.4;
+    let lastDir = null;
+
+    while(steps < maxSteps) {
+      const dirs = [[1,0], [-1,0], [0,1], [0,-1]];
+      const validMoves = [];
+      for(let d of dirs) {
+        const nx = cx+d[0], ny = cy+d[1];
+        if(nx>=0 && nx<=w && ny>=0 && ny<=h) {
+          const visited = path.some(p => p.x===nx && p.y===ny);
+          if(!visited || (nx===startX && ny===startY && steps > minSteps)) validMoves.push(d);
+        }
+      }
+      if(validMoves.length === 0) return this.generate2DWalkerLoop(w,h,diff); 
+      let dir = validMoves[Math.floor(Math.random()*validMoves.length)];
+      if(lastDir && Math.random() < straightBias) {
+         const same = validMoves.find(d => d[0]===lastDir[0] && d[1]===lastDir[1]);
+         if(same) dir = same;
+      }
+      lastDir = dir;
+      let edgeKey = '';
+      if(dir[0]===1) edgeKey = `h-${cx}-${cy}`;
+      else if(dir[0]===-1) edgeKey = `h-${cx-1}-${cy}`;
+      else if(dir[1]===1) edgeKey = `v-${cx}-${cy}`;
+      else if(dir[1]===-1) edgeKey = `v-${cx}-${cy-1}`;
+      loop.add(edgeKey);
+      cx += dir[0]; cy += dir[1];
+      path.push({x:cx,y:cy});
+      steps++;
+      if(cx===startX && cy===startY) break; 
+    }
+    if(loop.size < minSteps) return this.generate2DWalkerLoop(w,h,diff); 
+    return loop;
+  },
+
+  generate3DWalkerLoop(size) {
+    const loop = new Set();
+    let cx=2, cy=2, cz=0; 
+    const start = {x:2, y:2, z:0};
+    let steps = 0;
+    const path = [{x:cx,y:cy,z:cz}];
+    
+    while(steps < 120) {
+      const dirs = [[1,0,0], [-1,0,0], [0,1,0], [0,-1,0], [0,0,1], [0,0,-1]];
+      const valid = [];
+      for(let d of dirs) {
+        const nx=cx+d[0], ny=cy+d[1], nz=cz+d[2];
+        if(nx>=0 && nx<=size && ny>=0 && ny<=size && nz>=0 && nz<=1) {
+           const visited = path.some(p => p.x===nx && p.y===ny && p.z===nz);
+           if(!visited || (nx===start.x && ny===start.y && nz===start.z && steps>14)) valid.push(d);
+        }
+      }
+      if(valid.length === 0) return this.generate3DWalkerLoop(size);
+      
+      const dir = valid[Math.floor(Math.random()*valid.length)];
+      let k = '';
+      if(dir[0]===1) k=`h-${cx}-${cy}-${cz}`; else if(dir[0]===-1) k=`h-${cx-1}-${cy}-${cz}`;
+      else if(dir[1]===1) k=`v-${cx}-${cy}-${cz}`; else if(dir[1]===-1) k=`v-${cx}-${cy-1}-${cz}`;
+      else if(dir[2]===1) k=`d-${cx}-${cy}-${cz}`; else if(dir[2]===-1) k=`d-${cx}-${cy}-${cz-1}`;
+      loop.add(k);
+      cx+=dir[0]; cy+=dir[1]; cz+=dir[2];
+      path.push({x:cx,y:cy,z:cz});
+      steps++;
+      if(cx===start.x && cy===start.y && cz===start.z) break;
+    }
+    if(loop.size < 14) return this.generate3DWalkerLoop(size);
+    return loop;
+  },
+
+  checkSingleLoop(edges) {
+    if(edges.size === 0) return { ok: false, msg: "Empty" };
+    const adj = {}; const nodes = new Set();
+    edges.forEach(e => {
+      const p = e.split('-'); const t=p[0], x=+p[1], y=+p[2], z=p.length>3?+p[3]:0;
+      let u=`${x},${y},${z}`, v;
+      if(t==='h') v=`${x+1},${y},${z}`; else if(t==='v') v=`${x},${y+1},${z}`; else v=`${x},${y},${z+1}`;
+      if(!adj[u]) adj[u]=[]; adj[u].push(v); if(!adj[v]) adj[v]=[]; adj[v].push(u);
+      nodes.add(u); nodes.add(v);
+    });
+    for(let n of nodes) if(adj[n].length !== 2) return { ok: false, msg: "Branch/Gap" };
+    const visited = new Set(); const q = [nodes.values().next().value]; visited.add(q[0]);
+    let cnt = 0;
+    while(q.length > 0) { const c=q.pop(); cnt++; for(let n of adj[c]) if(!visited.has(n)) { visited.add(n); q.push(n); } }
+    if(cnt === nodes.size) return { ok: true };
+    return { ok: false, msg: "Split Loop" };
+  },
+
+  /* --- STANDARD GAMES --- */
+  async memSeq(board, diff) { /* ... */ 
+    const size=3+Math.floor(diff/3), len=3+diff; board.innerHTML=`<div class="grid" style="grid-template-columns:repeat(${size},1fr)"></div>`;
+    const tiles=[]; for(let i=0;i<size*size;i++){ const t=document.createElement('div'); t.className='tile'; board.firstChild.appendChild(t); tiles.push(t); }
+    const seq=Array.from({length:len},()=>Math.floor(Math.random()*(size*size))); this.state={seq,step:0,ready:false};
+    await this.sleep(500); for(let i=0;i<len;i++){ if(!this.active)return; tiles[seq[i]].classList.add('lit'); await this.sleep(400); tiles[seq[i]].classList.remove('lit'); await this.sleep(200); }
+    if(this.active){ this.state.ready=true; const msg=document.createElement('div'); msg.innerText="YOUR TURN"; msg.style.position="absolute"; msg.style.color="#fff"; msg.style.top="-30px"; board.appendChild(msg);
+      tiles.forEach((t,idx)=>{ t.onclick=()=>{ if(!this.state.ready)return; t.classList.add('lit'); setTimeout(()=>t.classList.remove('lit'),150); if(idx===seq[this.state.step]){ this.state.step++; if(this.state.step===len)App.win(3); }else{ t.classList.add('wrong'); this.state.ready=false; setTimeout(()=>App.win(1,1),500); }}});
+    }
+  },
+  memMatrix(board, diff) { /* ... */ 
+    const size=3+Math.floor((diff-1)/2), targets=3+diff; board.innerHTML=`<div class="grid" style="grid-template-columns:repeat(${size},1fr)"></div>`;
+    const idxs=Array.from({length:size*size},(_,i)=>i).sort(()=>Math.random()-.5).slice(0,targets); this.state={targets:idxs,clicked:[],mistakes:0};
+    for(let i=0;i<size*size;i++){ const t=document.createElement('div'); t.className='tile'; if(idxs.includes(i))t.classList.add('lit'); t.onclick=()=>{ if(!this.state.ready)return; if(t.classList.contains('correct'))return; if(idxs.includes(i)){ t.classList.add('correct'); this.state.clicked.push(i); if(this.state.clicked.length===targets)App.win(3,this.state.mistakes); }else{ t.classList.add('wrong'); this.state.mistakes++; }}; board.firstChild.appendChild(t); }
+    setTimeout(()=>{ board.querySelectorAll('.tile').forEach(e=>e.classList.remove('lit')); this.state.ready=true; },1500);
+  },
+  logSlide(board, diff) { /* ... */ 
+    const size=3+(diff>3?1:0); board.innerHTML=`<div class="grid" style="grid-template-columns:repeat(${size},1fr)"></div>`;
+    const grid=[]; let c=1; for(let y=0;y<size;y++){ grid[y]=[]; for(let x=0;x<size;x++) grid[y][x]=(y===size-1&&x===size-1)?0:c++; }
+    let empty={x:size-1,y:size-1}; for(let i=0;i<10+diff*15;i++){ const n=[]; if(empty.x>0)n.push({x:empty.x-1,y:empty.y}); if(empty.x<size-1)n.push({x:empty.x+1,y:empty.y}); if(empty.y>0)n.push({x:empty.x,y:empty.y-1}); if(empty.y<size-1)n.push({x:empty.x,y:empty.y+1}); const pick=n[Math.floor(Math.random()*n.length)]; grid[empty.y][empty.x]=grid[pick.y][pick.x]; grid[pick.y][pick.x]=0; empty=pick; }
+    const render=()=>{ board.firstChild.innerHTML=''; for(let y=0;y<size;y++) for(let x=0;x<size;x++){ const d=document.createElement('div'); d.className=`tile ${grid[y][x]===0?'empty':''}`; if(grid[y][x]!==0){ d.innerText=grid[y][x]; d.onclick=()=>{ if(Math.abs(x-empty.x)+Math.abs(y-empty.y)===1){ grid[empty.y][empty.x]=grid[y][x]; grid[y][x]=0; empty={x,y}; render(); let k=1,ok=true; for(let r=0;r<size;r++)for(let c=0;c<size;c++){ if(r===size-1&&c===size-1){if(grid[r][c]!==0)ok=false;}else if(grid[r][c]!==k++)ok=false; } if(ok)App.win(3); }}; } board.firstChild.appendChild(d); }}; render();
+  },
+  spdSchulte(board, diff) { /* ... */
+    const size=3+Math.floor((diff-1)/2); board.innerHTML=`<div class="grid" style="grid-template-columns:repeat(${size},1fr)"></div>`;
+    const nums=Array.from({length:size*size},(_,i)=>i+1).sort(()=>Math.random()-.5); let next=1;
+    nums.forEach(n=>{ const t=document.createElement('div'); t.className='tile'; t.innerText=n; t.onclick=()=>{ if(n===next){ t.classList.add('correct'); next++; if(next>size*size)App.win(3); }}; board.firstChild.appendChild(t); });
+  },
+  logLights(board, diff) { /* ... */
+    const size=3+Math.floor(diff/2); board.innerHTML=`<div class="grid" style="grid-template-columns:repeat(${size},1fr)"></div>`;
+    const cells=[]; let state=Array(size*size).fill(false);
+    const toggle=(idx,l)=>{ const x=idx%size,y=Math.floor(idx/size); [idx,idx-1,idx+1,idx-size,idx+size].forEach(i=>{ if(i<0||i>=size*size)return; if((idx%size===0&&i===idx-1)||(idx%size===size-1&&i===idx+1))return; state[i]=!state[i]; if(!l){if(state[i])cells[i].classList.add('lit');else cells[i].classList.remove('lit');}}); };
+    for(let i=0;i<size*size;i++){ const t=document.createElement('div'); t.className='tile'; t.onclick=()=>{toggle(i,false);}; cells.push(t); board.firstChild.appendChild(t); }
+    for(let k=0;k<5+diff*3;k++)toggle(Math.floor(Math.random()*size*size),true); state.forEach((s,i)=>{if(s)cells[i].classList.add('lit');});
+    this.checkWinCondition=()=>{if(state.every(Boolean))App.win(3);else App.feedback(false,"Lights Off");};
+  },
+  logNono(board, diff) { /* ... */
+    const size=4+diff; board.innerHTML=`<div style="display:grid;grid-template-columns:30px 1fr;grid-template-rows:30px 1fr;width:100%;height:100%;"><div></div><div id="n-cols" style="display:grid;grid-template-columns:repeat(${size},1fr)"></div><div id="n-rows" style="display:grid;grid-template-rows:repeat(${size},1fr)"></div><div id="n-grid" style="display:grid;grid-template-columns:repeat(${size},1fr);grid-template-rows:repeat(${size},1fr);border:1px solid #475569;"></div></div>`;
+    const answer=Array.from({length:size},()=>Array.from({length:size},()=>Math.random()>0.4?1:0)); const getHints=a=>a.join('').split('0').filter(x=>x).map(x=>x.length);
+    const rh=document.getElementById('n-rows'),ch=document.getElementById('n-cols'),gr=document.getElementById('n-grid');
+    answer.map(row=>getHints(row)).forEach(h=>rh.innerHTML+=`<div class="nono-hint">${h.join(' ')||'0'}</div>`);
+    for(let c=0;c<size;c++){ let col=[]; for(let r=0;r<size;r++)col.push(answer[r][c]); ch.innerHTML+=`<div class="nono-hint" style="writing-mode:vertical-lr">${getHints(col).join(' ')||'0'}</div>`; }
+    const state=Array.from({length:size},()=>Array(size).fill(0));
+    for(let y=0;y<size;y++)for(let x=0;x<size;x++){ const c=document.createElement('div'); c.className='nono-cell'; c.onclick=()=>{ state[y][x]=state[y][x]===1?0:1; c.className=state[y][x]?'nono-cell filled':'nono-cell'; }; gr.appendChild(c); }
+    this.checkWinCondition=()=>{ let ok=true; for(let r=0;r<size;r++)for(let k=0;k<size;k++)if(state[r][k]!==answer[r][k])ok=false; if(ok)App.win(3); else App.feedback(false,"Mismatch"); };
+  },
+
+  // --- 2D SLITHERLINK (REFINED SIZE/DIFF) ---
+  logSlither(board, diff) {
+    const s = 4 + Math.floor(diff * 1.5); 
+    board.innerHTML = `<div class="slither-wrapper" style="grid-template-columns: 10px repeat(${s}, 1fr 10px); grid-template-rows: 10px repeat(${s}, 1fr 10px);"></div>`;
+    const wrap = board.firstChild;
+    const validLoop = this.generate2DWalkerLoop(s, s, diff);
+    const cells = [];
+    
+    for(let y=0; y<s; y++) {
+      for(let x=0; x<s; x++) {
+        let count = 0;
+        if(validLoop.has(`h-${x}-${y}`)) count++;
+        if(validLoop.has(`h-${x}-${y+1}`)) count++;
+        if(validLoop.has(`v-${x}-${y}`)) count++;
+        if(validLoop.has(`v-${x+1}-${y}`)) count++;
+        cells.push({x,y,val:count});
+      }
+    }
+
+    const playerEdges = new Set();
+    for(let r=0; r<=2*s; r++) {
+      for(let c=0; c<=2*s; c++) {
+        const div = document.createElement('div');
+        if(r%2===0 && c%2===0) div.className='slither-dot';
+        else if(r%2===0) { 
+          const x=(c-1)/2, y=r/2; const id = `h-${x}-${y}`; div.className='slither-edge';
+          div.onclick = () => { if(playerEdges.has(id)) { playerEdges.delete(id); div.classList.remove('active'); } else { playerEdges.add(id); div.classList.add('active'); }};
+        } else if(c%2===0) { 
+          const x=c/2, y=(r-1)/2; const id = `v-${x}-${y}`; div.className='slither-edge';
+          div.onclick = () => { if(playerEdges.has(id)) { playerEdges.delete(id); div.classList.remove('active'); } else { playerEdges.add(id); div.classList.add('active'); }};
+        } else { 
+          const x=(c-1)/2, y=(r-1)/2; div.className='slither-cell';
+          const cell = cells.find(cl=>cl.x===x && cl.y===y);
+          const visibility = 0.9 - (diff * 0.1); 
+          if(cell && (cell.val > 0 || Math.random() > 0.5) && Math.random() < visibility) div.innerText = cell.val; 
+          else if(cell) cell.hidden = true; 
+        }
+        wrap.appendChild(div);
+      }
+    }
+
+    this.checkWinCondition = () => {
+      for(let c of cells) {
+        if(c.hidden) continue;
+        let cnt=0;
+        if(playerEdges.has(`h-${c.x}-${c.y}`)) cnt++;
+        if(playerEdges.has(`h-${c.x}-${c.y+1}`)) cnt++;
+        if(playerEdges.has(`v-${c.x}-${c.y}`)) cnt++;
+        if(playerEdges.has(`v-${c.x+1}-${c.y}`)) cnt++;
+        if(cnt!==c.val) { App.feedback(false, "Numbers Mismatch"); return; }
+      }
+      const res = this.checkSingleLoop(playerEdges);
+      if(!res.ok) { App.feedback(false, res.msg); return; }
+      App.win(3);
+    };
+  },
+
+  // --- 3D LIGHTS TARGET (PHYSICS) ---
+  spaLights3D(board, diff) {
+    board.innerHTML = `
+      <div class="voxel-ui-layout">
+        <div class="voxel-preview-area">
+          <div style="text-align:center;">
+            <div style="font-size:0.7rem; color:#94a3b8; margin-bottom:5px;">TARGET</div>
+            <div class="voxel-mini-scene" id="vox-target"></div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:0.7rem; color:#94a3b8; margin-bottom:5px;">YOU</div>
+            <div class="voxel-mini-scene" id="vox-player"></div>
+          </div>
+        </div>
+        <div class="spin-controls"><button class="spin-btn" id="spin-left">←</button><button class="spin-btn" id="spin-right">→</button></div>
+        <div class="voxel-controls" id="vox-ctrl"></div>
+      </div>
+    `;
+
+    const size = 3; 
+    let targetGrid = this.createVoxelGrid(size); let playerGrid = this.createVoxelGrid(size);
+    for(let i=0; i<5+diff*2; i++) {
+      const x = Math.floor(Math.random()*size); const y = Math.floor(Math.random()*size); const z = Math.floor(Math.random()*size);
+      this.toggleVoxel(targetGrid, x, y, z, size);
+    }
+
+    const tScene = document.getElementById('vox-target');
+    const pScene = document.getElementById('vox-player');
+    const defX = -20, defY = 45;
+    const rot = { x: defX, y: defY };
+    let spinDir = 0; 
+
+    const physicsLoop = () => {
+      if(!this.active) return;
+      if(spinDir !== 0) { rot.y += spinDir * 3; } 
+      else {
+        const dy = defY - rot.y; if(Math.abs(dy) > 0.1) rot.y += dy * 0.05; else rot.y = defY;
+        const dx = defX - rot.x; if(Math.abs(dx) > 0.1) rot.x += dx * 0.05; else rot.x = defX;
+      }
+      const transform = `rotateX(${rot.x}deg) rotateY(${rot.y}deg)`;
+      tScene.style.transform = transform; pScene.style.transform = transform;
+      requestAnimationFrame(physicsLoop);
+    };
+    physicsLoop();
+
+    const setSpin = (d) => spinDir = d;
+    const btnL = document.getElementById('spin-left'); const btnR = document.getElementById('spin-right');
+    const bindBtn = (el, d) => { el.onmousedown = () => setSpin(d); el.onmouseup = () => setSpin(0); el.onmouseleave = () => setSpin(0); el.ontouchstart = (e) => { e.preventDefault(); setSpin(d); }; el.ontouchend = (e) => { e.preventDefault(); setSpin(0); }; };
+    bindBtn(btnL, -1); bindBtn(btnR, 1);
+    const keyHandler = (e) => { if(e.key==='ArrowLeft') setSpin(-1); if(e.key==='ArrowRight') setSpin(1); };
+    const keyUpHandler = (e) => { if(e.key==='ArrowLeft'||e.key==='ArrowRight') setSpin(0); };
+    window.addEventListener('keydown', keyHandler); window.addEventListener('keyup', keyUpHandler);
+    this.cleanup = () => { window.removeEventListener('keydown', keyHandler); window.removeEventListener('keyup', keyUpHandler); };
+
+    this.renderVoxelScene(tScene, targetGrid, size, true); this.renderVoxelScene(pScene, playerGrid, size, false);
+    
+    const renderControls = (container, pGrid, tGrid, isReadOnly) => {
+      container.innerHTML = '';
+      const wrapper = document.createElement('div'); wrapper.style.display='flex'; wrapper.style.gap='10px';
+      if(!isReadOnly) {
+         const c1 = document.createElement('div'); c1.className='voxel-control-col'; c1.innerHTML='<div class="layer-label">TARGET</div>';
+         const c2 = document.createElement('div'); c2.className='voxel-control-col'; c2.innerHTML='<div class="layer-label">YOU</div>';
+         for(let z=0; z<size; z++) {
+            const d = document.createElement('div'); d.className='voxel-layer read-only';
+            for(let y=0; y<size; y++) for(let x=0; x<size; x++) { const b = document.createElement('div'); b.className = `voxel-btn ${tGrid[z][y][x]?'lit-target':''}`; d.appendChild(b); }
+            c1.appendChild(d);
+         }
+         for(let z=0; z<size; z++) {
+            const d = document.createElement('div'); d.className='voxel-layer';
+            for(let y=0; y<size; y++) for(let x=0; x<size; x++) {
+               const b = document.createElement('div'); b.className = `voxel-btn ${pGrid[z][y][x]?'lit':''}`;
+               b.onclick = () => { this.toggleVoxel(pGrid, x, y, z, size); this.renderVoxelScene(pScene, pGrid, size, false); renderControls(container, pGrid, tGrid, false); };
+               d.appendChild(b);
+            }
+            c2.appendChild(d);
+         }
+         container.appendChild(c1);
+         const div = document.createElement('div'); div.style.width='2px'; div.style.background='rgba(255,255,255,0.1)'; container.appendChild(div);
+         container.appendChild(c2);
+      }
+    };
+    renderControls(document.getElementById('vox-ctrl'), playerGrid, targetGrid, false);
+    this.checkWinCondition = () => { if(JSON.stringify(playerGrid) === JSON.stringify(targetGrid)) App.win(3); else App.feedback(false, "Pattern Mismatch"); };
+  },
+
+  createVoxelGrid(size) { return Array.from({length:size}, () => Array.from({length:size}, () => Array(size).fill(0))); },
+  toggleVoxel(grid, x, y, z, size) { const t = (cx, cy, cz) => { if(cx>=0 && cx<size && cy>=0 && cy<size && cz>=0 && cz<size) grid[cz][cy][cx] = 1 - grid[cz][cy][cx]; }; t(x,y,z);t(x+1,y,z);t(x-1,y,z);t(x,y+1,z);t(x,y-1,z);t(x,y,z+1);t(x,y,z-1); },
+  renderVoxelScene(container, grid, size, isTarget) {
+    container.innerHTML = '';
+    const gap = 22; const offset = (size * gap) / 2 - 10;
+    for(let z=0; z<size; z++) for(let y=0; y<size; y++) for(let x=0; x<size; x++) {
+      const isLit = grid[z][y][x] === 1;
+      const cube = document.createElement('div');
+      let cls = 'mini-cube'; if(isLit) cls += isTarget ? ' lit-target' : ' lit-player';
+      cube.className = cls;
+      cube.style.transform = `translate3d(${x*gap - offset}px, ${-z*gap + offset}px, ${y*gap - offset}px)`;
+      ['front','back','right','left','top','bottom'].forEach(f => {
+         const d = document.createElement('div'); d.className='mc-face';
+         if(f==='front')d.style.transform='translateZ(10px)'; if(f==='back')d.style.transform='rotateY(180deg) translateZ(10px)';
+         if(f==='right')d.style.transform='rotateY(90deg) translateZ(10px)'; if(f==='left')d.style.transform='rotateY(-90deg) translateZ(10px)';
+         if(f==='top')d.style.transform='rotateX(90deg) translateZ(10px)'; if(f==='bottom')d.style.transform='rotateX(-90deg) translateZ(10px)';
+         cube.appendChild(d);
+      });
+      container.appendChild(cube);
+    }
+  },
+
+  // --- 3D SLITHER LINK (WALKER) ---
+  spaSlither3D(board, diff) {
+    board.innerHTML = `
+      <div style="height:100%; width:100%; position:relative;">
+        <div class="scene-3d" id="wall-scene" style="width:100%; height:100%; cursor:grab;">
+          <div class="pivot-3d" id="wall-pivot"></div>
+        </div>
+        <div class="spin-controls"><button class="spin-btn" id="w-spin-left">←</button><button class="spin-btn" id="w-spin-right">→</button></div>
+      </div>
+    `;
+    const pivot = document.getElementById('wall-pivot');
+    
+    // Drag/Rotate Logic (Anywhere)
+    const rot = { x: -20, y: 45, vx: 0, vy: 0, dragging: false };
+    const updateRot = () => { 
+      if(!rot.dragging && this.active) { rot.x+=rot.vx; rot.y+=rot.vy; rot.vx*=0.95; rot.vy*=0.95; }
+      pivot.style.transform = `rotateX(${rot.x}deg) rotateY(${rot.y}deg)`;
+      if(Math.abs(rot.vx)>0.01 || Math.abs(rot.vy)>0.01) requestAnimationFrame(updateRot);
+    };
+    updateRot();
+
+    let lx, ly;
+    board.onmousedown = e => { if(!e.target.classList.contains('wall-edge')) { rot.dragging=true; lx=e.clientX; ly=e.clientY; rot.vx=0; rot.vy=0; }};
+    board.ontouchstart = e => { if(!e.target.classList.contains('wall-edge')) { rot.dragging=true; lx=e.touches[0].clientX; ly=e.touches[0].clientY; rot.vx=0; rot.vy=0; }};
+    
+    const move = (cx, cy) => {
+      if(rot.dragging) {
+        const dx = cx - lx; const dy = cy - ly;
+        rot.y += dx * 0.5; rot.x -= dy * 0.5;
+        rot.vx = -dy * 0.1; rot.vy = dx * 0.1; 
+        lx = cx; ly = cy;
+        pivot.style.transform = `rotateX(${rot.x}deg) rotateY(${rot.y}deg)`;
+      }
+    };
+    window.addEventListener('mousemove', e => move(e.clientX, e.clientY));
+    window.addEventListener('touchmove', e => move(e.touches[0].clientX, e.touches[0].clientY));
+    window.addEventListener('mouseup', () => { if(rot.dragging){ rot.dragging=false; updateRot(); }});
+    window.addEventListener('touchend', () => { if(rot.dragging){ rot.dragging=false; updateRot(); }});
+
+    const keyHandler = (e) => { 
+      if(e.key === 'ArrowLeft') { rot.vy = 2; updateRot(); } 
+      if(e.key === 'ArrowRight') { rot.vy = -2; updateRot(); }
+    };
+    window.addEventListener('keydown', keyHandler);
+    this.cleanup = () => window.removeEventListener('keydown', keyHandler);
+
+    // 5x5 Grid Logic
+    const size = 5;
+    const gap = 40; const offset = (size*gap)/2;
+    const cubes = []; for(let y=0; y<size; y++) for(let x=0; x<size; x++) cubes.push({x,y});
+
+    // 1. Generate Valid Loop (Walker 3D)
+    const activeEdges = this.generate3DWalkerLoop(size);
+
+    // 2. Render Cubes
+    const faceMap = {}; 
+    cubes.forEach(c => {
+      const grp = document.createElement('div');
+      grp.className = 'wall-cube';
+      grp.style.transform = `translate3d(${c.x*gap - offset}px, ${c.y*gap - offset}px, 0px)`;
+      
+      const front = document.createElement('div');
+      front.className = 'wall-face-front';
+      grp.appendChild(front);
+      faceMap[`${c.x},${c.y}`] = front;
+
+      const transforms = [
+        `rotateY(180deg) translateZ(20px)`, `rotateY(90deg) translateZ(20px)`,  
+        `rotateY(-90deg) translateZ(20px)`, `rotateX(90deg) translateZ(20px)`,  
+        `rotateX(-90deg) translateZ(20px)`
+      ];
+      transforms.forEach(t => { const d = document.createElement('div'); d.className = 'wall-face'; d.style.transform = t; grp.appendChild(d); });
+      pivot.appendChild(grp);
+    });
+
+    // 3. Set Numbers
+    cubes.forEach(c => {
+      const x = c.x, y = c.y;
+      let count = 0;
+      // Check 12 edges per cube
+      const checks = [
+        `h-${x}-${y}-0`, `h-${x}-${y+1}-0`, `v-${x}-${y}-0`, `v-${x+1}-${y}-0`,
+        `h-${x}-${y}-1`, `h-${x}-${y+1}-1`, `v-${x}-${y}-1`, `v-${x+1}-${y}-1`,
+        `d-${x}-${y}-0`, `d-${x+1}-${y}-0`, `d-${x}-${y+1}-0`, `d-${x+1}-${y+1}-0`
+      ];
+      checks.forEach(k => { if(activeEdges.has(k)) count++; });
+
+      faceMap[`${c.x},${c.y}`].dataset.target = count;
+      // High probability to show non-zero numbers
+      const visibility = 0.9 - (diff * 0.1); 
+      if(count > 0 && Math.random() < visibility) {
+        faceMap[`${c.x},${c.y}`].innerText = count;
+      }
+    });
+
+    // 4. Render Clickable Edges (ALL 3D) - Wider Hitbox
+    const playerEdges = new Set();
+    const renderEdge = (id, w, h, tx, ty, tz, rot) => {
+      const e = document.createElement('div');
+      e.className = 'wall-edge';
+      e.style.width = (w>h ? w : 18)+'px'; // Wider hit area
+      e.style.height = (h>w ? h : 18)+'px';
+      // :after renders the thin visible line
+      if(w>h) e.classList.add('h'); else e.classList.add('v');
+      e.style.marginLeft = (-parseInt(e.style.width)/2)+'px'; 
+      e.style.marginTop = (-parseInt(e.style.height)/2)+'px';
+      e.style.transform = `translate3d(${tx}px, ${ty}px, ${tz}px) ${rot||''}`;
+      e.onclick = (ev) => {
+        ev.stopPropagation(); 
+        if(playerEdges.has(id)) { playerEdges.delete(id); e.classList.remove('active'); }
+        else { playerEdges.add(id); e.classList.add('active'); }
+      };
+      pivot.appendChild(e);
+    }
+
+    const z = 22; 
+    // Front Edges (Z=0)
+    for(let y=0; y<=size; y++) for(let x=0; x<size; x++) renderEdge(`h-${x}-${y}-0`, gap, 12, x*gap - offset, y*gap - offset - 20, z);
+    for(let y=0; y<size; y++) for(let x=0; x<=size; x++) renderEdge(`v-${x}-${y}-0`, 12, gap, x*gap - offset - 20, y*gap - offset, z);
+    // Back Edges (Z=1)
+    for(let y=0; y<=size; y++) for(let x=0; x<size; x++) renderEdge(`h-${x}-${y}-1`, gap, 12, x*gap - offset, y*gap - offset - 20, -22);
+    for(let y=0; y<size; y++) for(let x=0; x<=size; x++) renderEdge(`v-${x}-${y}-1`, 12, gap, x*gap - offset - 20, y*gap - offset, -22);
+    // Depth Edges
+    for(let y=0; y<=size; y++) for(let x=0; x<=size; x++) {
+       renderEdge(`d-${x}-${y}-0`, 12, 40, x*gap - offset - 20, y*gap - offset - 20, 0, 'rotateX(90deg)');
+    }
+
+    this.checkWinCondition = () => {
+      // 1. Check Numbers
+      for(let y=0; y<size; y++) for(let x=0; x<size; x++) {
+        const el = faceMap[`${x},${y}`];
+        if(el.innerText !== "") {
+          const req = parseInt(el.innerText);
+          let count = 0;
+          const checks = [
+            `h-${x}-${y}-0`, `h-${x}-${y+1}-0`, `v-${x}-${y}-0`, `v-${x+1}-${y}-0`,
+            `h-${x}-${y}-1`, `h-${x}-${y+1}-1`, `v-${x}-${y}-1`, `v-${x+1}-${y}-1`,
+            `d-${x}-${y}-0`, `d-${x+1}-${y}-0`, `d-${x}-${y+1}-0`, `d-${x+1}-${y+1}-0`
+          ];
+          checks.forEach(k => { if(playerEdges.has(k)) count++; });
+          if(count !== req) { App.feedback(false, "Numbers Mismatch"); return; }
+        }
+      }
+      
+      // 2. Connectivity Check
+      const res = this.checkSingleLoop(playerEdges);
+      if(!res.ok) { App.feedback(false, res.msg); return; }
+      
+      App.win(3);
+    };
+  },
+
+  // ... Helpers ...
+  spaCubeMatchInit(board, diff) { /* Same */
+    board.innerHTML=`<div style="height:100%; display:flex; flex-direction:column; align-items:center;"><div style="margin-bottom:10px; color:#fff; font-size:0.8rem;">Match Face 1 to Front</div><div class="scene-3d" id="cube-scene"><div class="pivot-3d" id="match-cube"></div></div><button class="btn" style="margin-top:20px; width:auto; background:var(--success);" onclick="Game.checkCubeMatch()">SUBMIT</button></div>`;
+    const cube = document.getElementById('match-cube'); this.addRotateLogic(document.getElementById('board-container'), cube);
+    ['front','back','right','left','top','bottom'].forEach((f,i)=>{ const d=document.createElement('div'); d.className=`face f-${f}`; d.innerText=i+1; cube.appendChild(d); });
+  },
+  checkCubeMatch() {
+    const cube = document.getElementById('match-cube'); const rx=(cube.rotX%360+360)%360, ry=(cube.rotY%360+360)%360;
+    if((rx>340||rx<20)&&(ry>340||ry<20)) App.win(3); else { App.feedback(false, "Align!"); }
+  },
+  addRotateLogic(scene, target) {
+    target.rotX=-20; target.rotY=45; const upd=()=>{ target.style.transform=`rotateX(${target.rotX}deg) rotateY(${target.rotY}deg)`; }; upd();
+    let isDrag=false,lx,ly; const move=(dx,dy)=>{ target.rotY+=dx*0.5; target.rotX-=dy*0.5; upd(); };
+    scene.onmousedown=e=>{e.stopPropagation();isDrag=true;lx=e.clientX;ly=e.clientY;scene.style.cursor='grabbing';}; window.onmousemove=e=>{if(isDrag&&this.active){move(e.clientX-lx,e.clientY-ly);lx=e.clientX;ly=e.clientY;}}; window.onmouseup=()=>{isDrag=false;scene.style.cursor='default';};
+    scene.ontouchstart=e=>{e.stopPropagation();isDrag=true;lx=e.touches[0].clientX;ly=e.touches[0].clientY;}; window.ontouchmove=e=>{if(isDrag&&this.active){move(e.touches[0].clientX-lx,e.touches[0].clientY-ly);lx=e.touches[0].clientX;ly=e.touches[0].clientY;}}; window.ontouchend=()=>{isDrag=false;};
+  },
+  endGame(stars) { this.stop(); App.win(stars); }
+};
+
+const Particles = {
+  init() {
+    const cvs = document.getElementById('neural-network'); const ctx = cvs.getContext('2d');
+    let w, h, p=[], mx=-500, my=-500;
+    
+    // Spawn particles in a buffer zone around the screen
+    const BUFFER = 200;
+    
+    const reset = () => { 
+      w = window.innerWidth; 
+      h = window.innerHeight; 
+      cvs.width = w; 
+      cvs.height = h; 
+      
+      p = Array.from({length:1000}, (_, i) => { // Density 1000
+        const ox = Math.random() * (w + 2 * BUFFER) - BUFFER;
+        const oy = Math.random() * (h + 2 * BUFFER) - BUFFER;
+        return {
+          // Zoom out intro: Start at 50% scale
+          x: w/2 + (ox - w/2)*0.5, 
+          y: h/2 + (oy - h/2)*0.5,
+          ox: ox, oy: oy, 
+          vx: 0, vy: 0,
+          driftX: (Math.random() - 0.5) * 0.2, // Consistent Drift
+          driftY: (Math.random() - 0.5) * 0.2,
+          id: i
+        };
+      });
+    };
+    
+    window.addEventListener('resize', reset); 
+    reset();
+    
+    window.onmousemove = e => { 
+      mx = e.clientX; 
+      my = e.clientY; 
+      document.body.style.setProperty('--bg-x', mx+'px'); 
+      document.body.style.setProperty('--bg-y', my+'px'); 
+    };
+    
+    const loop = () => {
+      ctx.clearRect(0, 0, w, h);
+      
+      // Optimization: Grid for neighbors
+      const gridSize = 100;
+      const grid = {};
+      
+      p.forEach(pt => {
+        // 1. Smooth Linear Drift of Anchor
+        pt.ox += pt.driftX;
+        pt.oy += pt.driftY;
+        // Wrap anchors in buffer zone
+        if (pt.ox < -BUFFER) pt.ox += (w + 2*BUFFER);
+        if (pt.ox > w + BUFFER) pt.ox -= (w + 2*BUFFER);
+        if (pt.oy < -BUFFER) pt.oy += (h + 2*BUFFER);
+        if (pt.oy > h + BUFFER) pt.oy -= (h + 2*BUFFER);
+
+        // 2. Forces
+        // Spring force pulling back to anchor (Elasticity: 0.005 - very low)
+        const fx = (pt.ox - pt.x) * 0.01; 
+        const fy = (pt.oy - pt.y) * 0.01;
+
+        // Cursor Repulsion (Push away)
+        let repX = 0, repY = 0;
+        const dx = pt.x - mx; 
+        const dy = pt.y - my;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        
+        if (dist < 100) { // Range 100
+          let force = (100 - dist) / 100; // Linear 0 to 1
+          force = force * force * force; // Cubic falloff for soft edge
+          
+          repX = (dx / dist) * force * 10.0; // Strong center push
+          repY = (dy / dist) * force * 10.0;
+        }
+
+        // 3. Integrate
+        pt.vx += fx + repX;
+        pt.vy += fy + repY;
+
+        // 4. Damping (Friction)
+        pt.vx *= 0.92; 
+        pt.vy *= 0.92;
+
+        pt.x += pt.vx;
+        pt.y += pt.vy;
+        
+        // Manual wrapping for dots if they drift too far from anchor (safety)
+        // Usually spring keeps them close, but if they fly, wrap them.
+        if(Math.abs(pt.x - pt.ox) > w) pt.x = pt.ox; 
+        if(Math.abs(pt.y - pt.oy) > h) pt.y = pt.oy;
+
+        // Render Dot
+        // Only draw if on screen
+        if (pt.x > -10 && pt.x < w + 10 && pt.y > -10 && pt.y < h + 10) {
+             // Add to grid for line check
+             const gx = Math.floor(pt.x / gridSize);
+             const gy = Math.floor(pt.y / gridSize);
+             const key = `${gx},${gy}`;
+             if(!grid[key]) grid[key] = [];
+             grid[key].push(pt);
+             
+             // Draw Dot
+             let r=56, g=189, b=248; 
+             if(dist < 200) { 
+                const t = Math.max(0, (200-dist)/200); 
+                r = 56 + (255-56)*t; g = 189 + (255-189)*t; b = 248 + (255-248)*t;
+             }
+             ctx.fillStyle = `rgb(${r},${g},${b})`;
+             ctx.beginPath(); ctx.arc(pt.x, pt.y, 1.5, 0, Math.PI*2); ctx.fill();
+        }
+      });
+
+      // Connections via Grid
+      for(let key in grid) {
+        const cell = grid[key];
+        const [gx, gy] = key.split(',').map(Number);
+        
+        // Check this cell and half neighbors to avoid double drawing
+        const neighbors = [[0,0], [1,0], [0,1], [1,1], [-1,1]];
+        
+        cell.forEach(pt => {
+           neighbors.forEach(n => {
+              const nk = `${gx+n[0]},${gy+n[1]}`;
+              if(grid[nk]) {
+                 grid[nk].forEach(o => {
+                    if(pt === o) return;
+                    const d = Math.sqrt((pt.x-o.x)**2 + (pt.y-o.y)**2);
+                    if(d < 60) {
+                        // Brighter lines
+                        ctx.strokeStyle = `rgba(200, 230, 255, ${0.3 * (1 - d/60)})`;
+                        ctx.beginPath(); ctx.moveTo(pt.x, pt.y); ctx.lineTo(o.x, o.y); ctx.stroke();
+                        
+                        // Triangles (optimized)
+                        if (pt.id % 20 === 0 && o.id % 2 === 0) { // Limit frequency
+                             // Check a 3rd point in same cell for cheap triangle
+                             // Just pick next in array?
+                        }
+                    }
+                 });
+              }
+           });
+        });
+      }
+
+      requestAnimationFrame(loop);
+    }; 
+    loop();
+  }
+};
+Particles.init();
+</script>
+</body>
+</html>
